@@ -131,7 +131,11 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     role: 'owner' // Default role, will be overridden if there's an invitation
   };
 
-  const [createdUser] = await db.insert(users).values(newUser).returning();
+  const userResult = await db.insert(users).values(newUser);
+  const userId = Number(userResult[0].insertId);
+
+  // Fetch the created user
+  const [createdUser] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
 
   if (!createdUser) {
     return {
@@ -184,7 +188,10 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
       name: `${email}'s Team`
     };
 
-    [createdTeam] = await db.insert(teams).values(newTeam).returning();
+    const teamResult = await db.insert(teams).values(newTeam);
+    const newTeamId = Number(teamResult[0].insertId);
+
+    [createdTeam] = await db.select().from(teams).where(eq(teams.id, newTeamId)).limit(1);
 
     if (!createdTeam) {
       return {
@@ -313,11 +320,10 @@ export const deleteAccount = validatedActionWithUser(
       ActivityType.DELETE_ACCOUNT
     );
 
-    // Soft delete
     await db
       .update(users)
       .set({
-        deletedAt: sql`CURRENT_TIMESTAMP`,
+        deletedAt: new Date(),
         email: sql`CONCAT(email, '-', id, '-deleted')` // Ensure email uniqueness
       })
       .where(eq(users.id, user.id));
