@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a42d1b0b-2591-4e83-8930-1022d66938f7",
+  "id": "bc7fc25f-0eb6-43ca-8ff5-76007e38a038",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "activity_logs": {
@@ -301,21 +301,21 @@
         },
         "stripe_customer_id": {
           "name": "stripe_customer_id",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "stripe_subscription_id": {
           "name": "stripe_subscription_id",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "stripe_product_id": {
           "name": "stripe_product_id",
-          "type": "text",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

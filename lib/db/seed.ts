@@ -44,7 +44,8 @@ async function seed() {
   const password = 'admin123';
   const passwordHash = await hashPassword(password);
 
-  const [user] = await db
+  // MySQL doesn't support .returning(), so we use insertId from the result
+  const userResult = await db
     .insert(users)
     .values([
       {
@@ -52,21 +53,22 @@ async function seed() {
         passwordHash: passwordHash,
         role: "owner",
       },
-    ])
-    .returning();
+    ]);
 
+  const userId = Number(userResult[0].insertId);
   console.log('Initial user created.');
 
-  const [team] = await db
+  const teamResult = await db
     .insert(teams)
     .values({
       name: 'Test Team',
-    })
-    .returning();
+    });
+
+  const teamId = Number(teamResult[0].insertId);
 
   await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
+    teamId: teamId,
+    userId: userId,
     role: 'owner',
   });
 
